@@ -84,6 +84,11 @@ public class GameInfoModel
     public bool PracticeMode { get; set; } = true;
 
     /// <summary>
+    /// Whether challenges must be solved sequentially (in order)
+    /// </summary>
+    public bool SequentialMode { get; set; }
+
+    /// <summary>
     /// Start time
     /// </summary>
     [Required]
@@ -122,6 +127,7 @@ public class GameInfoModel
             Content = game.Content,
             Hidden = game.Hidden,
             PracticeMode = game.PracticeMode,
+            SequentialMode = game.SequentialMode,
             PosterUrl = game.PosterUrl,
             InviteCode = game.InviteCode,
             PublicKey = game.PublicKey,

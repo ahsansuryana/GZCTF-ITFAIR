@@ -1,0 +1,41 @@
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+
+RUN apk add --update --no-cache nodejs npm && \
+    npm install -g pnpm@11
+
+WORKDIR /src
+
+COPY global.json Directory.Packages.props ./
+COPY GZCTF/ ./GZCTF/
+
+WORKDIR /src/GZCTF
+
+ARG BUILD_TIMESTAMP
+ARG GIT_SHA
+ARG GIT_NAME
+
+ENV VITE_APP_BUILD_TIMESTAMP=$BUILD_TIMESTAMP \
+    VITE_APP_GIT_SHA=$GIT_SHA \
+    VITE_APP_GIT_NAME=$GIT_NAME
+
+RUN dotnet publish "GZCTF.csproj" -c Release -o /publish --no-self-contained /p:PublishReadyToRun=true
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
+
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
+    LC_ALL=en_US.UTF-8
+
+WORKDIR /app
+
+RUN apk add --update --no-cache wget libpcap icu-data-full icu-libs \
+    ca-certificates libgdiplus tzdata krb5-libs && \
+    update-ca-certificates
+
+COPY --from=build /publish .
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=5m --timeout=3s --start-period=10s --retries=1 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/healthz || exit 1
+
+ENTRYPOINT ["dotnet", "GZCTF.dll"]

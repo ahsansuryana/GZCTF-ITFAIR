@@ -389,6 +389,13 @@ public class GameInstanceRepository(
         }
     }
 
+    public async Task<int[]> GetSolvedChallengeIds(int participationId, CancellationToken token = default) =>
+        await Context.FirstSolves
+            .AsNoTracking()
+            .Where(fs => fs.ParticipationId == participationId)
+            .Select(fs => fs.ChallengeId)
+            .ToArrayAsync(token);
+
     private Task<int> CountBloodEligibleSolves(int challengeId, DateTimeOffset start, DateTimeOffset end,
         CancellationToken token)
     {

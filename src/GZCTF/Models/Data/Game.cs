@@ -49,6 +49,11 @@ public partial class Game
     public bool PracticeMode { get; set; } = true;
 
     /// <summary>
+    /// Whether challenges must be solved sequentially (in order)
+    /// </summary>
+    public bool SequentialMode { get; set; }
+
+    /// <summary>
     /// Poster hash
     /// </summary>
     [MaxLength(Limits.FileHashLength)]
@@ -196,6 +201,7 @@ public partial class Game
         Summary = model.Summary;
         Hidden = model.Hidden;
         PracticeMode = model.PracticeMode;
+        SequentialMode = model.SequentialMode;
         AcceptWithoutReview = model.AcceptWithoutReview;
         InviteCode = model.InviteCode;
         EndTimeUtc = model.EndTimeUtc;
