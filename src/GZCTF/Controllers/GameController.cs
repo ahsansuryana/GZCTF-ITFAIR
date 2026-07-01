@@ -52,8 +52,10 @@ public class GameController(
     IGameInstanceRepository gameInstanceRepository,
     IParticipationRepository participationRepository,
     IOptionsSnapshot<ContainerPolicy> containerPolicy,
-    IStringLocalizer<Program> localizer) : ControllerBase
+    IStringLocalizer<Program> localizer,
+    AppDbContext dbContext) : ControllerBase
 {
+    private readonly AppDbContext _dbContext = dbContext;
     /// <summary>
     /// Get the recent games
     /// </summary>
@@ -942,17 +944,17 @@ public class GameController(
         if (context.Game!.EnableSequentialChallenges)
         {
             var isUnlocked = await challengeRepository.IsChallengeUnlockedForTeamAsync(challengeId, context.Participation!.Id, token);
-            if (!isUnlocked)
+if (!isUnlocked)
             {
                 // Get previous challenge title for error message
                 var currentChallenge = await challengeRepository.GetChallenge(id, challengeId, token);
                 if (currentChallenge is not null)
                 {
-                    var prevChallenge = await Context.GameChallenges
+                    var prevChallenge = await _dbContext.GameChallenges
                         .Where(c => c.GameId == id && c.Order == currentChallenge.Order - 1 && c.IsEnabled)
                         .Select(c => c.Title)
                         .FirstOrDefaultAsync(token);
-                    
+
                     if (!string.IsNullOrEmpty(prevChallenge))
                     {
                         return NotFound(new RequestResponse(
@@ -1019,7 +1021,7 @@ public class GameController(
                 var currentChallenge = await challengeRepository.GetChallenge(id, challengeId, token);
                 if (currentChallenge is not null)
                 {
-                    var prevChallenge = await Context.GameChallenges
+                    var prevChallenge = await _dbContext.GameChallenges
                         .Where(c => c.GameId == id && c.Order == currentChallenge.Order - 1 && c.IsEnabled)
                         .Select(c => c.Title)
                         .FirstOrDefaultAsync(token);

@@ -521,17 +521,58 @@ public class GameRepository(
                 item.Score = 0;
             }
 
-            // 5.3. update scoreboard item
+// 5.3. update scoreboard item
             scoreboardItem.SolvedChallenges.Add(item);
 
             if (!solve.ScoreEligible)
                 continue;
 
-// only update last submission time for eligible solves,
+            // only update last submission time for eligible solves,
             // to prevent incorrectly ranking teams with ineligible
             // late submissions above teams with eligible early submissions
             scoreboardItem.Score += item.Score;
             scoreboardItem.LastSubmissionTime = item.SubmitTimeUtc;
+        }
+
+        // 6. sort scoreboard items by score and last submission time
+        items = items.Values
+            .OrderByDescending(i => i.Score)
+            .ThenBy(i => i.LastSubmissionTime)
+            .ToDictionary(i => i.Id); // team id -> scoreboard item
+
+        // 7. update rank and organization rank
+        var currentRank = 1;
+        Dictionary<int, int> ranks = [];
+        var topTeams = new Dictionary<int, HashSet<int>> { [0] = [] };
+
+        foreach (var item in items.Values)
+        {
+            var division = item.DivisionId is { } div ? divisions.GetValueOrDefault(div) : null;
+
+            if (CheckDivisionPermission(division, GamePermission.RankOverall))
+            {
+                item.Rank = currentRank++;
+
+                if (item.Rank <= 10)
+                    topTeams[0].Add(item.Id);
+            }
+
+            if (division is null)
+                continue;
+
+            if (ranks.TryGetValue(division.Id, out var rank))
+            {
+                item.DivisionRank = rank + 1;
+                ranks[division.Id]++;
+                if (item.DivisionRank <= 10)
+                    topTeams[division.Id].Add(item.Id);
+            }
+            else
+            {
+                item.DivisionRank = 1;
+                ranks[division.Id] = 1;
+                topTeams[division.Id] = [item.Id];
+            }
         }
 
         // 8. Compute sequential challenge unlock status for each team

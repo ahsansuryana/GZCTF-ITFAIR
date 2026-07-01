@@ -118,6 +118,17 @@ public class ChallengeUpdateModel
     public int? OriginalScore { get; set; }
 
     /// <summary>
+    /// Minimum score rate
+    /// </summary>
+    [Range(0, 1)]
+    public double? MinScoreRate { get; set; }
+
+    /// <summary>
+    /// Difficulty coefficient
+    /// </summary>
+    public double? Difficulty { get; set; }
+
+    /// <summary>
     /// Check if hints are updated
     /// </summary>
     /// <param name="originalHash">Original hash</param>
