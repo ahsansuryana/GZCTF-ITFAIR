@@ -365,6 +365,12 @@ public partial class ChallengeInfo
     [NotMapped]
     [MemoryPackIgnore]
     public bool DisableBloodBonus { get; set; }
+
+    /// <summary>
+    /// Sequential order (0 means no sequence / always available)
+    /// </summary>
+    [Required]
+    public int Order { get; set; }
 }
 
 [MemoryPackable]

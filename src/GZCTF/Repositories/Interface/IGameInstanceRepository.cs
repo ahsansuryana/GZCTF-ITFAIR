@@ -58,4 +58,12 @@ public interface IGameInstanceRepository : IRepository
     /// <param name="token"></param>
     /// <returns></returns>
     public Task DestroyAllContainers(GameChallenge challenge, CancellationToken token = default);
+
+    /// <summary>
+    /// Get IDs of challenges solved by a participation
+    /// </summary>
+    /// <param name="participationId">Participation ID</param>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    public Task<int[]> GetSolvedChallengeIds(int participationId, CancellationToken token = default);
 }

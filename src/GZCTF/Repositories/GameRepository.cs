@@ -342,6 +342,7 @@ public class GameRepository(
                 .IgnoreAutoIncludes()
                 .Where(c => c.GameId == game.Id && c.IsEnabled)
                 .OrderBy(c => c.Category)
+                .ThenBy(c => c.Order)
                 .ThenBy(c => c.Title)
                 .Select(c => new ChallengeRecord
                 (
@@ -358,7 +359,8 @@ public class GameRepository(
                         Score = c.OriginalScore,
                         SolvedCount = 0,
                         DeadlineUtc = c.DeadlineUtc,
-                        DisableBloodBonus = c.DisableBloodBonus
+                        DisableBloodBonus = c.DisableBloodBonus,
+                        Order = c.Order
                     }
                 ))
                 .ToDictionaryAsync(c => c.Id, c => c, token);

@@ -106,6 +106,11 @@ public class ChallengeUpdateModel
     public bool? DisableBloodBonus { get; set; }
 
     /// <summary>
+    /// Sequential order (0 means no sequence / always available)
+    /// </summary>
+    public int? Order { get; set; }
+
+    /// <summary>
     /// Initial score
     /// </summary>
     public int? OriginalScore { get; set; }

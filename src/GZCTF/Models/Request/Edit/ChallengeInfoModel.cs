@@ -56,6 +56,11 @@ public class ChallengeInfoModel
     /// </summary>
     public DateTimeOffset? DeadlineUtc { get; set; }
 
+    /// <summary>
+    /// Sequential order (0 means no sequence / always available)
+    /// </summary>
+    public int Order { get; set; }
+
     internal static ChallengeInfoModel FromChallenge(GameChallenge challenge) =>
         new()
         {
@@ -67,6 +72,7 @@ public class ChallengeInfoModel
             MinScore = (int)Math.Floor(challenge.MinScoreRate * challenge.OriginalScore),
             OriginalScore = challenge.OriginalScore,
             IsEnabled = challenge.IsEnabled,
-            DeadlineUtc = challenge.DeadlineUtc
+            DeadlineUtc = challenge.DeadlineUtc,
+            Order = challenge.Order
         };
 }

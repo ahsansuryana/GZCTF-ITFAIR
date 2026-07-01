@@ -959,6 +959,8 @@ export interface GameInfoModel {
   publicKey?: string;
   /** Is the game in practice mode (accessible even after the game ends) */
   practiceMode?: boolean;
+  /** Whether challenges must be solved sequentially (in order) */
+  sequentialMode?: boolean;
   /**
    * Start time
    * @format uint64
@@ -1284,6 +1286,11 @@ export interface ChallengeInfoModel {
    * @format uint64
    */
   deadlineUtc?: number | null;
+  /**
+   * Sequential order (0 means no sequence / always available)
+   * @format int32
+   */
+  order?: number;
 }
 
 /** Challenge update information (Edit) */
@@ -1354,6 +1361,11 @@ export interface ChallengeUpdateModel {
   enableTrafficCapture?: boolean | null;
   /** Is blood bonus disabled (enable by default) */
   disableBloodBonus?: boolean | null;
+  /**
+   * Sequential order (0 means no sequence / always available)
+   * @format int32
+   */
+  order?: number | null;
   /**
    * Initial score
    * @format int32
@@ -1733,6 +1745,11 @@ export interface ChallengeInfo {
   bloods: Blood[];
   /** Whether to disable blood bonus */
   disableBloodBonus: boolean;
+  /**
+   * Sequential order (0 means no sequence / always available)
+   * @format int32
+   */
+  order: number;
 }
 
 export interface Blood {

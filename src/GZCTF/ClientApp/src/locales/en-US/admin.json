@@ -184,6 +184,10 @@
           "description": "Capturing the traffic when the team solves challenges. Platform proxy needs to be enabled",
           "label": "Enable Traffic Capture"
         },
+        "order": {
+          "description": "0 = no sequence, challenges with lower order must be solved first",
+          "label": "Order"
+        },
         "type": {
           "description": "Cannot be changed after creation",
           "label": "Type"
@@ -284,6 +288,10 @@
         "practice_mode": {
           "description": "View challenges after the game ends",
           "label": "Practice Mode"
+        },
+        "sequential_mode": {
+          "description": "Challenges must be solved in ascending order",
+          "label": "Sequential Mode"
         },
         "start_date": "Start Date",
         "start_time": "Start Time",

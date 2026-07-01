@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: gzctf
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gzctf_password}
+      POSTGRES_DB: gzctf
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gzctf"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gzctf:
+    build:
+      context: ./src
+      dockerfile: GZCTF/Dockerfile.standalone
+    ports:
+      - "${GZCTF_PORT:-8080}:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      GZCTF_XorKey: ${XOR_KEY:?XorKey is required - set it in .env}
+      GZCTF_ConnectionStrings__Database: "Host=postgres;Port=5432;Database=gzctf;Username=gzctf;Password=${POSTGRES_PASSWORD:-gzctf_password}"
+      GZCTF_ConnectionStrings__RedisCache: "redis:6379"
+      GZCTF_ConnectionStrings__Storage: "s3://accessKey=${MINIO_ROOT_USER:-minioadmin};secretKey=${MINIO_ROOT_PASSWORD:-minioadmin};endpoint=http://minio:9000;bucket=gzctf;region=us-east-1;forcePathStyle=true"
+      GZCTF_GlobalConfig__Title: ${GZCTF_TITLE:-GZ::CTF}
+      GZCTF_GlobalConfig__Slogan: ${GZCTF_SLOGAN:-Hack for fun not for profit}
+      GZCTF_AccountPolicy__AllowRegister: ${GZCTF_ALLOW_REGISTER:-true}
+      GZCTF_AccountPolicy__ActiveOnRegister: ${GZCTF_ACTIVE_ON_REGISTER:-true}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:

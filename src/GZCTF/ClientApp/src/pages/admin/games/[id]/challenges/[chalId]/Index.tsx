@@ -447,6 +447,20 @@ const GameChallengeEdit: FC = () => {
             </Stack>
           </Grid.Col>
           <Grid.Col span={1}>
+            <NumberInput
+              label={t('admin.content.games.challenges.order.label')}
+              description={t('admin.content.games.challenges.order.description')}
+              min={0}
+              disabled={disabled}
+              value={challengeInfo?.order ?? 0}
+              onChange={(e) => {
+                const number = getInputNumber(e)
+                if (isNaN(number)) return
+                setChallengeInfo({ ...challengeInfo, order: number })
+              }}
+            />
+          </Grid.Col>
+          <Grid.Col span={1}>
             <ScoreFunc
               currentAcceptCount={currentAcceptCount}
               originalScore={challengeInfo.originalScore ?? 500}

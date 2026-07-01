@@ -772,6 +772,13 @@ public class GameController(
                 Id = context.Participation!.TeamId
             };
 
+        // filter out locked challenges if sequential mode is enabled
+        if (context.Game!.SequentialMode)
+        {
+            var solvedChallengeIds = boardItem.SolvedChallenges.Select(s => s.Id).ToHashSet();
+            challenges = FilterChallengesBySequence(challenges, scoreboard.ChallengeMap, solvedChallengeIds);
+        }
+
         return Ok(new GameDetailModel
         {
             ScoreboardItem = boardItem,
@@ -932,13 +939,38 @@ public class GameController(
             return NotFound(new RequestResponse(localizer[nameof(Resources.Program.Challenge_NotFound)],
                 StatusCodes.Status404NotFound));
 
+        var scoreboard = await gameRepository.GetScoreboard(context.Game!, token);
+
+        // check if challenge is unlocked in sequential mode
+        if (context.Game!.SequentialMode)
+        {
+            if (!scoreboard.ChallengeMap.TryGetValue(challengeId, out var chalInfo))
+                return NotFound(new RequestResponse(localizer[nameof(Resources.Program.Challenge_NotFound)],
+                    StatusCodes.Status404NotFound));
+
+            if (chalInfo.Order > 0)
+            {
+                var solvedChallengeIds = (await gameInstanceRepository.GetSolvedChallengeIds(
+                    context.Participation!.Id, token)).ToHashSet();
+
+                var maxSolvedOrder = scoreboard.ChallengeMap.Values
+                    .Where(c => solvedChallengeIds.Contains(c.Id))
+                    .Select(c => c.Order)
+                    .DefaultIfEmpty(0)
+                    .Max();
+
+                if (chalInfo.Order > maxSolvedOrder + 1)
+                    return NotFound(new RequestResponse(localizer[nameof(Resources.Program.Challenge_NotFound)],
+                        StatusCodes.Status404NotFound));
+            }
+        }
+
         var instance = await gameInstanceRepository.GetInstance(context.Participation!, challengeId, token);
 
         if (instance is null)
             return NotFound(new RequestResponse(localizer[nameof(Resources.Program.Game_ChallengeNotFound)],
                 StatusCodes.Status404NotFound));
 
-        var scoreboard = await gameRepository.GetScoreboard(context.Game!, token);
         var scoreboardChallenge =
             scoreboard.ChallengeMap.TryGetValue(challengeId, out var challenge) ? challenge : null;
 
@@ -1005,6 +1037,24 @@ public class GameController(
             if (!permission.HasFlag(GamePermission.ViewChallenge | GamePermission.SubmitFlags))
                 return BadRequest(
                     new RequestResponse(localizer[nameof(Resources.Program.Challenge_SubmissionNoPermission)]));
+
+            // check if challenge is unlocked in sequential mode
+            if (context.Game!.SequentialMode && instance.Challenge.Order > 0)
+            {
+                var solvedChallengeIds = await gameInstanceRepository.GetSolvedChallengeIds(
+                    context.Participation!.Id, token);
+
+                var scoreboard = await gameRepository.GetScoreboard(context.Game, token);
+                var maxSolvedOrder = scoreboard.ChallengeMap.Values
+                    .Where(c => solvedChallengeIds.Contains(c.Id))
+                    .Select(c => c.Order)
+                    .DefaultIfEmpty(0)
+                    .Max();
+
+                if (instance.Challenge.Order > maxSolvedOrder + 1)
+                    return BadRequest(
+                        new RequestResponse(localizer[nameof(Resources.Program.Challenge_NotFound)]));
+            }
 
             var currentAttempts =
                 await submissionRepository.CountSubmissions(context.Participation!.Id, challengeId, token);
@@ -1412,6 +1462,37 @@ public class GameController(
 
     private static string GameETag(int gameId, DateTimeOffset lastModified) =>
         $"\"{gameId}-{lastModified.ToUnixTimeSeconds():X}\"";
+
+    private static Dictionary<ChallengeCategory, IEnumerable<ChallengeInfo>> FilterChallengesBySequence(
+        Dictionary<ChallengeCategory, IEnumerable<ChallengeInfo>> challenges,
+        Dictionary<int, ChallengeInfo> challengeMap,
+        HashSet<int> solvedChallengeIds)
+    {
+        var allInfos = challengeMap.Values;
+        var orderedIds = allInfos.Where(c => c.Order > 0).Select(c => c.Id).ToHashSet();
+        var maxSolvedOrder = allInfos
+            .Where(c => solvedChallengeIds.Contains(c.Id))
+            .Select(c => c.Order)
+            .DefaultIfEmpty(0)
+            .Max();
+
+        // Determine which challenge IDs are unlocked
+        var unlockedIds = new HashSet<int>();
+        foreach (var info in allInfos)
+        {
+            if (info.Order == 0 || info.Order <= maxSolvedOrder + 1)
+                unlockedIds.Add(info.Id);
+        }
+
+        var res = new Dictionary<ChallengeCategory, IEnumerable<ChallengeInfo>>();
+        foreach ((var cat, var chs) in challenges)
+        {
+            var infos = chs.Where(c => unlockedIds.Contains(c.Id)).ToArray();
+            if (infos.Length > 0)
+                res[cat] = infos;
+        }
+        return res;
+    }
 
     private static Dictionary<ChallengeCategory, IEnumerable<ChallengeInfo>> FilterChallengesByPermission(
         Dictionary<ChallengeCategory, IEnumerable<ChallengeInfo>> challenges,

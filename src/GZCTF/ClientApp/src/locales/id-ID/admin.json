@@ -184,6 +184,10 @@
           "description": "Menangkap traffic saat tim menyelesaikan challenge. Proxy platform perlu diaktifkan",
           "label": "Aktifkan tangkapan traffic"
         },
+        "order": {
+          "description": "0 = tanpa urutan, challenge dengan nomor urut lebih kecil harus dikerjakan lebih dulu",
+          "label": "Urutan"
+        },
         "type": {
           "description": "Setelah dibuat, tidak bisa diubah",
           "label": "Jenis"
@@ -284,6 +288,10 @@
         "practice_mode": {
           "description": "Lihat challenge setelah permainan selesai",
           "label": "Mode Latihan"
+        },
+        "sequential_mode": {
+          "description": "Challenge harus dikerjakan berurutan sesuai nomor urut",
+          "label": "Mode Berurutan"
         },
         "start_date": "Tanggal Mulai",
         "start_time": "Waktu Mulai",

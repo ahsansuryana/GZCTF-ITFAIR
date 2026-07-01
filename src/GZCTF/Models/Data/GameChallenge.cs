@@ -36,6 +36,11 @@ public class GameChallenge : Challenge
     public double Difficulty { get; set; } = 5;
 
     /// <summary>
+    /// Sequential order (0 means no sequence / always available)
+    /// </summary>
+    public int Order { get; set; }
+
+    /// <summary>
     /// Current score of the challenge
     /// </summary>
     [NotMapped]
@@ -74,6 +79,7 @@ public class GameChallenge : Challenge
         Difficulty = model.Difficulty ?? Difficulty;
         FileName = model.FileName ?? FileName;
         DisableBloodBonus = model.DisableBloodBonus ?? DisableBloodBonus;
+        Order = model.Order ?? Order;
         SubmissionLimit = model.SubmissionLimit ?? SubmissionLimit;
 
         // isEnabled should be updated alone
