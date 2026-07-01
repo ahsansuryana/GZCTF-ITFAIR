@@ -108,30 +108,14 @@ public class ChallengeUpdateModel
     /// <summary>
     /// Sequential order (0 means no sequence / always available)
     /// </summary>
+    [Range(1, int.MaxValue, ErrorMessageResourceName = nameof(Resources.Program.Model_OutOfRange),
+        ErrorMessageResourceType = typeof(Resources.Program))]
     public int? Order { get; set; }
 
     /// <summary>
     /// Initial score
     /// </summary>
     public int? OriginalScore { get; set; }
-
-    /// <summary>
-    /// Minimum score rate
-    /// </summary>
-    [Range(0, 1)]
-    public double? MinScoreRate { get; set; }
-
-    /// <summary>
-    /// Difficulty coefficient
-    /// </summary>
-    public double? Difficulty { get; set; }
-
-    /// <summary>
-    /// Challenge order for sequential unlocking (1 = first, 2 = second, etc.)
-    /// </summary>
-    [Range(1, int.MaxValue, ErrorMessageResourceName = nameof(Resources.Program.Model_OutOfRange),
-        ErrorMessageResourceType = typeof(Resources.Program))]
-    public int? Order { get; set; }
 
     /// <summary>
     /// Check if hints are updated
