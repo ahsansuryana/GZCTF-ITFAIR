@@ -31,7 +31,7 @@ export const ChallengeCreateModal: FC<ChallengeCreateModalProps> = (props) => {
   const [title, setTitle] = useInputState('')
   const [category, setCategory] = useState<string | null>(null)
   const [type, setType] = useState<string | null>(null)
-  const [order, setOrder] = useInputState('1')
+  const [order, setOrder] = useState(1)
 
   const { t } = useTranslation()
 
@@ -46,7 +46,7 @@ export const ChallengeCreateModal: FC<ChallengeCreateModalProps> = (props) => {
         title: title,
         category: category as ChallengeCategory,
         type: type as ChallengeType,
-        order: parseInt(order) || 1,
+        order: order,
       })
       showNotification({
         color: 'teal',
@@ -104,7 +104,7 @@ export const ChallengeCreateModal: FC<ChallengeCreateModalProps> = (props) => {
           required
           min={1}
           value={order}
-          onChange={setOrder}
+          onChange={(value) => setOrder(value ?? 1)}
         />
         <Button fullWidth disabled={disabled} onClick={onCreate}>
           {t('admin.button.challenges.new')}

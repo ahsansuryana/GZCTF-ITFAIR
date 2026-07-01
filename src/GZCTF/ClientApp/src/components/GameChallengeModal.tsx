@@ -1,4 +1,4 @@
-import { ModalProps } from '@mantine/core'
+import { Center, Modal, ModalProps, Stack, Text } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { notifications, showNotification, updateNotification } from '@mantine/notifications'
 import { mdiCheck, mdiClose, mdiLoading, mdiLock } from '@mdi/js'
@@ -52,32 +52,34 @@ export const GameChallengeModal: FC<GameChallengeModalProps> = (props) => {
 
   const isLimitReached = (challenge?.limit && (challenge.attempts ?? 0) >= challenge.limit) || false
 
-  // If challenge is locked, show locked view
+// If challenge is locked, show locked view
   if (isLocked) {
     return (
-      <ChallengeModal
-        {...modalProps}
-        gameTitle={gameTitle}
-        challenge={challenge ?? { title, score }}
-        cateData={cateData}
-        solved={false}
-        disabled={true}
-        onCreate={async () => {}}
-        onDestroy={async () => {}}
-        onSubmitFlag={async () => {}}
-        onExtend={async () => {}}
-        gameEnded={gameEnded}
-        practiceMode={practiceMode}
-        customContent={
-          <Center>
-            <Stack gap="md">
-              <Icon path={mdiLock} size={4} color="gray" />
-              <Text ta="center" c="dimmed">
-                {t('game.content.challenge.locked', { previousTitle: challenge?.lockMessage?.replace("Selesaikan soal '", "").replace("' terlebih dahulu untuk membuka soal ini", "") || 'sebelumnya' })}
-              </Text>
-            </Stack>
-          </Center>
-        }
+      <Modal.Root
+        opened={modalProps.opened}
+        onClose={modalProps.onClose}
+        size="40%"
+        centered
+      >
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title>{title ?? ''}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Center>
+              <Stack gap="md">
+                <Icon path={mdiLock} size={4} color="gray" />
+                <Text ta="center" c="dimmed">
+                  {t('game.content.challenge.locked', { previousTitle: challenge?.lockMessage?.replace("Selesaikan soal '", "").replace("' terlebih dahulu untuk membuka soal ini", "") || 'sebelumnya' })}
+                </Text>
+              </Stack>
+            </Center>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+    )
+  }
       />
     )
   }

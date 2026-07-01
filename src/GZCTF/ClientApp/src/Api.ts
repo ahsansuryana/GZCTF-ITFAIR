@@ -2032,6 +2032,14 @@ export interface ChallengeDetailModel {
    * @format uint64
    */
   deadline?: number | null;
+  /**
+   * Whether this challenge is unlocked for the current team
+   */
+  isUnlocked?: boolean;
+  /**
+   * Lock message for locked challenges
+   */
+  lockMessage?: string | null;
 }
 
 export interface ClientFlagContext {

@@ -79,6 +79,11 @@ public class DetailedGameInfoModel
     public bool PracticeMode { get; set; } = true;
 
     /// <summary>
+    /// Whether challenges must be solved sequentially
+    /// </summary>
+    public bool EnableSequentialChallenges { get; set; } = false;
+
+    /// <summary>
     /// Team participation status
     /// </summary>
     [JsonPropertyName("status")]
@@ -114,6 +119,7 @@ public class DetailedGameInfoModel
             Summary = game.Summary,
             Content = game.Content,
             PracticeMode = game.PracticeMode,
+            EnableSequentialChallenges = game.EnableSequentialChallenges,
             Divisions =
                 game.Divisions?.Select(d => new DivisionInfo
                 {
