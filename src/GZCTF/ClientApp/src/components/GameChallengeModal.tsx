@@ -79,9 +79,7 @@ export const GameChallengeModal: FC<GameChallengeModalProps> = (props) => {
         </Modal.Content>
       </Modal.Root>
     )
-  }
-      />
-    )
+}
   }
 
   const onCreate = async () => {
