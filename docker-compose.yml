@@ -58,6 +58,8 @@ services:
       GZCTF_AccountPolicy__AllowRegister: ${GZCTF_ALLOW_REGISTER:-true}
       GZCTF_AccountPolicy__ActiveOnRegister: ${GZCTF_ACTIVE_ON_REGISTER:-true}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    volumes:
+      - gzctf_files:/app/files
     depends_on:
       postgres:
         condition: service_healthy
@@ -71,3 +73,4 @@ volumes:
   postgres_data:
   redis_data:
   minio_data:
+  gzctf_files:
