@@ -725,7 +725,7 @@ public class EditController(
                 return BadRequest(new RequestResponse(localizer[nameof(Resources.Program.Model_OutOfRange)]));
 
             var orderExists = await context.GameChallenges
-                .AnyAsync(c => c.GameId == id && c.Order == order && c.Id != cId, token);
+                .AnyAsync<GameChallenge>(c => c.GameId == id && c.Order == order && c.Id != cId, token);
             if (orderExists)
                 return BadRequest(new RequestResponse("Order sudah digunakan oleh soal lain dalam game ini"));
         }
