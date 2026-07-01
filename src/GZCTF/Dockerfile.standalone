@@ -5,7 +5,7 @@ RUN apk add --update --no-cache nodejs npm && \
 
 WORKDIR /src
 
-COPY global.json Directory.Packages.props ./
+COPY Directory.Packages.props ./
 COPY GZCTF/ ./GZCTF/
 
 WORKDIR /src/GZCTF
