@@ -11,6 +11,7 @@ using GZCTF.Services.Container.Manager;
 using GZCTF.Services.Transfer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using NSwag.Annotations;
 
