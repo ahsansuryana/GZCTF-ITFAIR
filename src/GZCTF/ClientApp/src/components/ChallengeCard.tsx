@@ -12,7 +12,7 @@ import {
   alpha,
   useMantineTheme,
 } from '@mantine/core'
-import { mdiFlag } from '@mdi/js'
+import { mdiFlag, mdiLock } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import cx from 'clsx'
 import dayjs from 'dayjs'
@@ -32,10 +32,12 @@ interface ChallengeCardProps {
   iconMap: Map<SubmissionType, PartialIconProps | undefined>
   colorMap: Map<SubmissionType, string | undefined>
   teamId?: number
+  isLocked?: boolean
+  lockMessage?: string | null
 }
 
 export const ChallengeCard: FC<ChallengeCardProps> = (props: ChallengeCardProps) => {
-  const { challenge, solved, onClick, iconMap, teamId, colorMap } = props
+  const { challenge, solved, onClick, iconMap, teamId, colorMap, isLocked, lockMessage } = props
   const challengeCategoryLabelMap = useChallengeCategoryLabelMap()
   const cateData = challengeCategoryLabelMap.get(challenge.category!)
   const theme = useMantineTheme()
@@ -52,9 +54,22 @@ export const ChallengeCard: FC<ChallengeCardProps> = (props: ChallengeCardProps)
       onClick={onClick}
       shadow="sm"
       className={cx(misc.hoverCard, classes.root)}
-      data-faded={solved || isFaded || undefined}
+      data-faded={solved || isFaded || isLocked || undefined}
       data-no-move
+      style={{ opacity: isLocked ? 0.6 : 1, pointerEvents: isLocked ? 'none' : 'auto' }}
     >
+      {isLocked && (
+        <div className={classes.lockOverlay}>
+          <Center>
+            <Stack gap="sm">
+              <Icon path={mdiLock} size={2} color="gray" />
+              <Tooltip label={lockMessage || 'Locked'} position="top">
+                <Text size="xs" c="dimmed" fw="bold">Terkunci</Text>
+              </Tooltip>
+            </Stack>
+          </Center>
+        </div>
+      )}
       <Stack gap="xs" pos="relative" style={{ zIndex: 99 }}>
         <Group h="30px" wrap="nowrap" justify="space-between" gap={2}>
           <ScrollingText text={challenge.title || ''} size="lg" />

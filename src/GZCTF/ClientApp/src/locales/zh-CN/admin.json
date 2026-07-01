@@ -187,6 +187,10 @@
         "type": {
           "description": "创建后不可更改",
           "label": "题目类型"
+        },
+        "order": {
+          "description": "顺序解题模式下的题目顺序 (1 = 第一题)",
+          "label": "顺序"
         }
       },
       "divisions": {
@@ -284,6 +288,10 @@
         "practice_mode": {
           "description": "比赛结束后仍然可以查看题目和提交",
           "label": "练习模式"
+        },
+        "sequential_challenges": {
+          "description": "队伍必须按顺序解题（题目 1 -> 2 -> 3）。已锁定的题目会显示但无法访问。",
+          "label": "顺序解题"
         },
         "start_date": "开始日期",
         "start_time": "开始时间",

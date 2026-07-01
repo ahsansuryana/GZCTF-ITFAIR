@@ -1,7 +1,7 @@
 import { ModalProps } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { notifications, showNotification, updateNotification } from '@mantine/notifications'
-import { mdiCheck, mdiClose, mdiLoading } from '@mdi/js'
+import { mdiCheck, mdiClose, mdiLoading, mdiLock } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import React, { FC, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,12 +42,45 @@ export const GameChallengeModal: FC<GameChallengeModalProps> = (props) => {
   const isDynamic =
     challenge?.type === ChallengeType.StaticContainer || challenge?.type === ChallengeType.DynamicContainer
 
+  // Check if challenge is locked for sequential mode
+  const isLocked = challenge?.isUnlocked === false
+
   const [disabled, setDisabled] = useState(false)
   const [submitId, setSubmitId] = useState(0)
   const [flag, setFlag] = useInputState('')
   const [solvedChallengeId, setSolvedChallengeId] = useState<number | null>(null)
 
   const isLimitReached = (challenge?.limit && (challenge.attempts ?? 0) >= challenge.limit) || false
+
+  // If challenge is locked, show locked view
+  if (isLocked) {
+    return (
+      <ChallengeModal
+        {...modalProps}
+        gameTitle={gameTitle}
+        challenge={challenge ?? { title, score }}
+        cateData={cateData}
+        solved={false}
+        disabled={true}
+        onCreate={async () => {}}
+        onDestroy={async () => {}}
+        onSubmitFlag={async () => {}}
+        onExtend={async () => {}}
+        gameEnded={gameEnded}
+        practiceMode={practiceMode}
+        customContent={
+          <Center>
+            <Stack gap="md">
+              <Icon path={mdiLock} size={4} color="gray" />
+              <Text ta="center" c="dimmed">
+                {t('game.content.challenge.locked', { previousTitle: challenge?.lockMessage?.replace("Selesaikan soal '", "").replace("' terlebih dahulu untuk membuka soal ini", "") || 'sebelumnya' })}
+              </Text>
+            </Stack>
+          </Center>
+        }
+      />
+    )
+  }
 
   const onCreate = async () => {
     if (!challengeId || disabled) return

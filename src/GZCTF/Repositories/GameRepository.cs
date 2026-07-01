@@ -342,6 +342,7 @@ public class GameRepository(
                 .IgnoreAutoIncludes()
                 .Where(c => c.GameId == game.Id && c.IsEnabled)
                 .OrderBy(c => c.Category)
+                .ThenBy(c => c.Order)
                 .ThenBy(c => c.Title)
                 .Select(c => new ChallengeRecord
                 (
@@ -358,7 +359,8 @@ public class GameRepository(
                         Score = c.OriginalScore,
                         SolvedCount = 0,
                         DeadlineUtc = c.DeadlineUtc,
-                        DisableBloodBonus = c.DisableBloodBonus
+                        DisableBloodBonus = c.DisableBloodBonus,
+                        Order = c.Order
                     }
                 ))
                 .ToDictionaryAsync(c => c.Id, c => c, token);
@@ -525,55 +527,40 @@ public class GameRepository(
             if (!solve.ScoreEligible)
                 continue;
 
-            // only update last submission time for eligible solves,
+// only update last submission time for eligible solves,
             // to prevent incorrectly ranking teams with ineligible
             // late submissions above teams with eligible early submissions
             scoreboardItem.Score += item.Score;
             scoreboardItem.LastSubmissionTime = item.SubmitTimeUtc;
         }
 
-        // 6. sort scoreboard items by score and last submission time
-        items = items.Values
-            .OrderByDescending(i => i.Score)
-            .ThenBy(i => i.LastSubmissionTime)
-            .ToDictionary(i => i.Id); // team id -> scoreboard item
-
-        // 7. update rank and organization rank
-        var currentRank = 1;
-        Dictionary<int, int> ranks = [];
-        Dictionary<int, HashSet<int>> topTeams = new() { [0] = [] };
-
-        foreach (var item in items.Values)
+        // 8. Compute sequential challenge unlock status for each team
+        if (game.EnableSequentialChallenges)
         {
-            var division = item.DivisionId is { } div ? divisions.GetValueOrDefault(div) : null;
+            // Get challenges ordered by Order
+            var orderedChallenges = challenges.Values
+                .Where(c => c.Order > 0)
+                .OrderBy(c => c.Order)
+                .ToList();
 
-            if (CheckDivisionPermission(division, GamePermission.RankOverall))
+            foreach (var scoreboardItem in items.Values)
             {
-                item.Rank = currentRank++;
+                var solvedIds = scoreboardItem.SolvedChallenges
+                    .Where(c => c.Type != SubmissionType.Unaccepted)
+                    .Select(c => c.Id)
+                    .ToHashSet();
 
-                if (item.Rank <= 10)
-                    topTeams[0].Add(item.Id);
-            }
-
-            if (division is null)
-                continue;
-
-            if (ranks.TryGetValue(division.Id, out var rank))
-            {
-                item.DivisionRank = rank + 1;
-                ranks[division.Id]++;
-                if (item.DivisionRank <= 10)
-                    topTeams[division.Id].Add(item.Id);
-            }
-            else
-            {
-                item.DivisionRank = 1;
-                ranks[division.Id] = 1;
-                topTeams[division.Id] = [item.Id];
+                for (int i = 0; i < orderedChallenges.Count; i++)
+                {
+                    var chal = orderedChallenges[i];
+                    bool isUnlocked = i == 0 || (i > 0 && solvedIds.Contains(orderedChallenges[i - 1].Id));
+                    chal.IsUnlocked = isUnlocked;
+                    chal.Order = i + 1;
+                }
             }
         }
 
-        // 7. generate top timelines by solved challenges
+        // 9. generate top timelines by solved challenges
         var timelines = topTeams.ToDictionary(
             i => i.Key,
             i => i.Value.Select(tid =>

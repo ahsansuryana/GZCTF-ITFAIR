@@ -953,6 +953,8 @@ export interface GameInfoModel {
    * @format int32
    */
   containerCountLimit?: number;
+  /** Whether challenges must be solved sequentially (unlock next after solving previous) */
+  enableSequentialChallenges?: boolean;
   /** Game poster URL */
   poster?: string | null;
   /** Game public key */
@@ -1284,6 +1286,19 @@ export interface ChallengeInfoModel {
    * @format uint64
    */
   deadlineUtc?: number | null;
+  /**
+   * Challenge order for sequential unlocking (1 = first challenge)
+   * @format int32
+   */
+  order?: number;
+  /**
+   * Whether this challenge is unlocked for the current team
+   */
+  isUnlocked?: boolean;
+  /**
+   * Lock message for locked challenges
+   */
+  lockMessage?: string | null;
 }
 
 /** Challenge update information (Edit) */
@@ -1371,6 +1386,12 @@ export interface ChallengeUpdateModel {
    * @format double
    */
   difficulty?: number | null;
+  /**
+   * Challenge order for sequential unlocking (1 = first challenge)
+   * @format int32
+   * @min 1
+   */
+  order?: number | null;
 }
 
 /** New attachment information (Edit) */
@@ -1733,6 +1754,15 @@ export interface ChallengeInfo {
   bloods: Blood[];
   /** Whether to disable blood bonus */
   disableBloodBonus: boolean;
+  /**
+   * Challenge order for sequential unlocking (1 = first challenge)
+   * @format int32
+   */
+  order?: number;
+  /**
+   * Whether this challenge is unlocked for the current team
+   */
+  isUnlocked?: boolean;
 }
 
 export interface Blood {

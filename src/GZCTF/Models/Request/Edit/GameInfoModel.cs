@@ -63,6 +63,11 @@ public class GameInfoModel
     public int ContainerCountLimit { get; set; } = 3;
 
     /// <summary>
+    /// Whether challenges must be solved sequentially (unlock next after solving previous)
+    /// </summary>
+    public bool EnableSequentialChallenges { get; set; } = false;
+
+    /// <summary>
     /// Game poster URL
     /// </summary>
     [JsonPropertyName("poster")]
@@ -123,6 +128,7 @@ public class GameInfoModel
             AcceptWithoutReview = game.AcceptWithoutReview,
             TeamMemberCountLimit = game.TeamMemberCountLimit,
             ContainerCountLimit = game.ContainerCountLimit,
+            EnableSequentialChallenges = game.EnableSequentialChallenges,
             StartTimeUtc = game.StartTimeUtc,
             EndTimeUtc = game.EndTimeUtc,
             WriteupDeadline = game.WriteupDeadline,

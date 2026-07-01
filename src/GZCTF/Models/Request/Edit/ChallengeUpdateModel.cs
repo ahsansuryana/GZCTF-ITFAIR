@@ -122,6 +122,13 @@ public class ChallengeUpdateModel
     public double? Difficulty { get; set; }
 
     /// <summary>
+    /// Challenge order for sequential unlocking (1 = first, 2 = second, etc.)
+    /// </summary>
+    [Range(1, int.MaxValue, ErrorMessageResourceName = nameof(Resources.Program.Model_OutOfRange),
+        ErrorMessageResourceType = typeof(Resources.Program))]
+    public int? Order { get; set; }
+
+    /// <summary>
     /// Check if hints are updated
     /// </summary>
     /// <param name="originalHash">Original hash</param>

@@ -324,6 +324,16 @@ const GameInfoEdit: FC = () => {
           )}
           onChange={(e) => game && setGame({ ...game, practiceMode: e.target.checked })}
         />
+        <Switch
+          disabled={disabled}
+          checked={game?.enableSequentialChallenges ?? false}
+          classNames={{ root: misc.switchVerticalMiddle }}
+          label={SwitchLabel(
+            t('admin.content.games.info.sequential_challenges.label'),
+            t('admin.content.games.info.sequential_challenges.description')
+          )}
+          onChange={(e) => game && setGame({ ...game, enableSequentialChallenges: e.target.checked })}
+        />
       </SimpleGrid>
       <Group grow justify="space-between">
         <Textarea

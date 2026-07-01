@@ -938,6 +938,33 @@ public class GameController(
             return NotFound(new RequestResponse(localizer[nameof(Resources.Program.Game_ChallengeNotFound)],
                 StatusCodes.Status404NotFound));
 
+        // Check sequential challenge unlock
+        if (context.Game!.EnableSequentialChallenges)
+        {
+            var isUnlocked = await challengeRepository.IsChallengeUnlockedForTeamAsync(challengeId, context.Participation!.Id, token);
+            if (!isUnlocked)
+            {
+                // Get previous challenge title for error message
+                var currentChallenge = await challengeRepository.GetChallenge(id, challengeId, token);
+                if (currentChallenge is not null)
+                {
+                    var prevChallenge = await Context.GameChallenges
+                        .Where(c => c.GameId == id && c.Order == currentChallenge.Order - 1 && c.IsEnabled)
+                        .Select(c => c.Title)
+                        .FirstOrDefaultAsync(token);
+                    
+                    if (!string.IsNullOrEmpty(prevChallenge))
+                    {
+                        return NotFound(new RequestResponse(
+                            $"Selesaikan soal '{prevChallenge}' terlebih dahulu untuk membuka soal ini",
+                            StatusCodes.Status404NotFound));
+                    }
+                }
+                return NotFound(new RequestResponse(localizer[nameof(Resources.Program.Challenge_NotFound)],
+                    StatusCodes.Status404NotFound));
+            }
+        }
+
         var scoreboard = await gameRepository.GetScoreboard(context.Game!, token);
         var scoreboardChallenge =
             scoreboard.ChallengeMap.TryGetValue(challengeId, out var challenge) ? challenge : null;
@@ -981,6 +1008,31 @@ public class GameController(
 
         if (context.Result is not null)
             return context.Result;
+
+        // Check sequential challenge unlock
+        if (context.Game!.EnableSequentialChallenges)
+        {
+            var isUnlocked = await challengeRepository.IsChallengeUnlockedForTeamAsync(challengeId, context.Participation!.Id, token);
+            if (!isUnlocked)
+            {
+                // Get previous challenge title for error message
+                var currentChallenge = await challengeRepository.GetChallenge(id, challengeId, token);
+                if (currentChallenge is not null)
+                {
+                    var prevChallenge = await Context.GameChallenges
+                        .Where(c => c.GameId == id && c.Order == currentChallenge.Order - 1 && c.IsEnabled)
+                        .Select(c => c.Title)
+                        .FirstOrDefaultAsync(token);
+                    
+                    if (!string.IsNullOrEmpty(prevChallenge))
+                    {
+                        return BadRequest(new RequestResponse(
+                            $"Selesaikan soal '{prevChallenge}' terlebih dahulu untuk membuka soal ini"));
+                    }
+                }
+                return BadRequest(new RequestResponse(localizer[nameof(Resources.Program.Challenge_SubmissionNoPermission)]));
+            }
+        }
 
         const int maxRetries = 3;
         for (var retry = 0; retry < maxRetries; retry++)

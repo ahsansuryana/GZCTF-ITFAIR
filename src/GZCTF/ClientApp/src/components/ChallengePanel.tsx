@@ -14,10 +14,10 @@ import {
   Title,
 } from '@mantine/core'
 import { useLocalStorage } from '@mantine/hooks'
-import { mdiFileUploadOutline, mdiFlagOutline, mdiPuzzle } from '@mdi/js'
+import { mdiFileUploadOutline, mdiFlagOutline, mdiPuzzle, mdiLock } from '@mdi/js'
 import { Icon } from '@mdi/react'
 import dayjs from 'dayjs'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useParams } from 'react-router'
 import { ChallengeCard } from '@Components/ChallengeCard'
@@ -49,9 +49,35 @@ export const ChallengePanel: FC = () => {
 
   const allChallenges = Object.values(challenges ?? {}).flat()
 
+  // Compute lock status for sequential challenges
+  const challengesWithLock = useMemo(() => {
+    if (!game?.enableSequentialChallenges || !teamInfo?.rank?.solvedChallenges) {
+      return allChallenges.map(chal => ({ ...chal, isLocked: false, lockMessage: null }))
+    }
+
+    const solvedIds = new Set(
+      teamInfo.rank.solvedChallenges
+        .filter(c => c.type !== SubmissionType.Unaccepted)
+        .map(c => c.id)
+    )
+
+    // Sort by order
+    const orderedChallenges = [...allChallenges].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+
+    return orderedChallenges.map((chal, idx) => {
+      const isLocked = idx > 0 && !solvedIds.has(orderedChallenges[idx - 1].id)
+      let lockMessage = null
+      if (isLocked) {
+        const prevChallenge = orderedChallenges[idx - 1]
+        lockMessage = `Selesaikan soal '${prevChallenge.title}' terlebih dahulu untuk membuka soal ini`
+      }
+      return { ...chal, isLocked, lockMessage }
+    })
+  }, [allChallenges, game?.enableSequentialChallenges, teamInfo?.rank?.solvedChallenges])
+
   const currentChallenges =
-    challenges &&
-    (activeTab !== 'All' ? (challenges[activeTab] ?? []) : allChallenges).filter(
+    challengesWithLock &&
+    (activeTab !== 'All' ? (challengesWithLock.filter(c => c.category === activeTab)) : challengesWithLock).filter(
       (chal) =>
         !hideSolved || (teamInfo && teamInfo.rank?.solvedChallenges?.find((c) => c.id === chal.id)) === undefined
     )
@@ -233,9 +259,11 @@ export const ChallengePanel: FC = () => {
             spacing="sm"
             cols={{ base: 3, w18: 4, w24: 6, w30: 8, w36: 10, w42: 12, w48: 14 }}
           >
-            {currentChallenges?.map((chal) => {
+{currentChallenges?.map((chal) => {
               const status = teamInfo?.rank?.solvedChallenges?.find((c) => c.id === chal.id)?.type
               const solved = status !== SubmissionType.Unaccepted && status !== undefined
+              const isLocked = chal.isLocked === true
+              const lockMessage = chal.lockMessage || null
 
               return (
                 <ChallengeCard
@@ -244,6 +272,7 @@ export const ChallengePanel: FC = () => {
                   iconMap={iconMap}
                   colorMap={colorMap}
                   onClick={() => {
+                    if (isLocked) return
                     setChallenge(chal)
                     setDetailOpened(true)
                     // update hash after modal opened, so don't trigger useEffect
@@ -251,6 +280,8 @@ export const ChallengePanel: FC = () => {
                   }}
                   solved={solved}
                   teamId={teamInfo?.rank?.id}
+                  isLocked={isLocked}
+                  lockMessage={lockMessage}
                 />
               )
             })}

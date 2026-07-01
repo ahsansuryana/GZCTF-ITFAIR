@@ -26,6 +26,9 @@
       "comment": "或许还有更难的挑战在等着你……",
       "title": "题目都被解出啦！"
     },
+    "challenge": {
+      "locked": "Selesaikan soal '{previousTitle}' terlebih dahulu untuk membuka soal ini"
+    },
     "duration": "{{hours}} 小时",
     "end_at": "结束于",
     "end_time": "结束时间",

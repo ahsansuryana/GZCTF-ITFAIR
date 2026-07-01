@@ -91,6 +91,11 @@ public partial class Game
     public int ContainerCountLimit { get; set; } = 3;
 
     /// <summary>
+    /// Whether challenges must be solved sequentially (unlock next after solving previous)
+    /// </summary>
+    public bool EnableSequentialChallenges { get; set; } = false;
+
+    /// <summary>
     /// Start time
     /// </summary>
     [Required]
@@ -197,6 +202,7 @@ public partial class Game
         StartTimeUtc = model.StartTimeUtc;
         TeamMemberCountLimit = model.TeamMemberCountLimit;
         ContainerCountLimit = model.ContainerCountLimit;
+        EnableSequentialChallenges = model.EnableSequentialChallenges;
         WriteupNote = model.WriteupNote;
         WriteupRequired = model.WriteupRequired;
         WriteupDeadline = model.WriteupDeadline;

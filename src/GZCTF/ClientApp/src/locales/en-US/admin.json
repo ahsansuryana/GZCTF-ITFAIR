@@ -187,6 +187,10 @@
         "type": {
           "description": "Cannot be changed after creation",
           "label": "Type"
+        },
+        "order": {
+          "description": "Challenge order in sequential mode (1 = first challenge)",
+          "label": "Order"
         }
       },
       "divisions": {
@@ -284,6 +288,10 @@
         "practice_mode": {
           "description": "View challenges after the game ends",
           "label": "Practice Mode"
+        },
+        "sequential_challenges": {
+          "description": "Teams must solve challenges in order (Challenge 1 -> 2 -> 3). Locked challenges are shown but not accessible.",
+          "label": "Sequential Challenges"
         },
         "start_date": "Start Date",
         "start_time": "Start Time",

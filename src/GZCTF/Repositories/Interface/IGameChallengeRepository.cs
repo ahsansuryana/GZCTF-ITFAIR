@@ -91,4 +91,13 @@ public interface IGameChallengeRepository : IRepository
     /// <param name="token"></param>
     /// <returns></returns>
     public Task<TaskStatus> RemoveFlag(GameChallenge challenge, int flagId, CancellationToken token = default);
+
+    /// <summary>
+    /// Check if a challenge is unlocked for a specific team participation
+    /// </summary>
+    /// <param name="challengeId">Challenge ID</param>
+    /// <param name="participationId">Participation ID</param>
+    /// <param name="token"></param>
+    /// <returns>True if unlocked, false if locked</returns>
+    public Task<bool> IsChallengeUnlockedForTeamAsync(int challengeId, int participationId, CancellationToken token = default);
 }

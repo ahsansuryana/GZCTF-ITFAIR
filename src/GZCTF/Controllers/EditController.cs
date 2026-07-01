@@ -40,7 +40,8 @@ public class EditController(
     GameExportService exportService,
     GameImportService importService,
     IDivisionRepository divisionRepository,
-    IStringLocalizer<Program> localizer) : Controller
+    IStringLocalizer<Program> localizer,
+    AppDbContext context) : Controller
 {
     /// <summary>
     /// Add Post
@@ -225,6 +226,18 @@ public class EditController(
         if (game is null)
             return NotFound(new RequestResponse(localizer[nameof(Resources.Program.Game_NotFound)],
                 StatusCodes.Status404NotFound));
+
+        // Auto-assign Order to challenges when EnableSequentialChallenges is enabled
+        if (model.EnableSequentialChallenges == true && game.EnableSequentialChallenges == false)
+        {
+            var challenges = await challengeRepository.GetChallenges(id, token);
+            int order = 1;
+            foreach (var chal in challenges.OrderBy(c => c.Id))
+            {
+                chal.Order = order++;
+            }
+            await gameRepository.SaveAsync(token);
+        }
 
         game.Update(model);
         await gameRepository.UpdateGame(game, token);
@@ -704,6 +717,18 @@ public class EditController(
         if (!string.IsNullOrWhiteSpace(model.FlagTemplate) && res.Type == ChallengeType.DynamicContainer &&
             !model.IsValidFlagTemplate())
             return BadRequest(new RequestResponse(localizer[nameof(Resources.Program.Challenge_FlagTooTrivial)]));
+
+        // Validate Order uniqueness if provided
+        if (model.Order is { } order)
+        {
+            if (order < 1)
+                return BadRequest(new RequestResponse(localizer[nameof(Resources.Program.Model_OutOfRange)]));
+
+            var orderExists = await Context.GameChallenges
+                .AnyAsync(c => c.GameId == id && c.Order == order && c.Id != cId, token);
+            if (orderExists)
+                return BadRequest(new RequestResponse("Order sudah digunakan oleh soal lain dalam game ini"));
+        }
 
         res.Update(model);
 

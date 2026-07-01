@@ -365,6 +365,16 @@ public partial class ChallengeInfo
     [NotMapped]
     [MemoryPackIgnore]
     public bool DisableBloodBonus { get; set; }
+
+    /// <summary>
+    /// Challenge order for sequential unlocking (1 = first, 2 = second, etc.)
+    /// </summary>
+    public int Order { get; set; }
+
+    /// <summary>
+    /// Whether this challenge is unlocked for the current team
+    /// </summary>
+    public bool IsUnlocked { get; set; } = true;
 }
 
 [MemoryPackable]

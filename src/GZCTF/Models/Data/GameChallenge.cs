@@ -36,6 +36,12 @@ public class GameChallenge : Challenge
     public double Difficulty { get; set; } = 5;
 
     /// <summary>
+    /// Order of the challenge for sequential unlocking (1-based, lower = earlier)
+    /// </summary>
+    [Required]
+    public int Order { get; set; } = 0;
+
+    /// <summary>
     /// Current score of the challenge
     /// </summary>
     [NotMapped]
@@ -72,6 +78,7 @@ public class GameChallenge : Challenge
         OriginalScore = model.OriginalScore ?? OriginalScore;
         MinScoreRate = model.MinScoreRate ?? MinScoreRate;
         Difficulty = model.Difficulty ?? Difficulty;
+        Order = model.Order ?? Order;
         FileName = model.FileName ?? FileName;
         DisableBloodBonus = model.DisableBloodBonus ?? DisableBloodBonus;
         SubmissionLimit = model.SubmissionLimit ?? SubmissionLimit;

@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Badge,
   Card,
   Group,
   Progress,
@@ -63,12 +64,19 @@ export const ChallengeEditCard: FC<ChallengeEditCardProps> = ({ challenge, onTog
           <Text truncate fw="bold">
             {challenge.title}
           </Text>
-          <Text size="sm" fw="bold" ff="monospace" w="5rem">
-            {challenge.score}
-            <Text span fw="bold" c="dimmed">
-              /{challenge.originalScore}pts
+          <Group gap="xs" wrap="nowrap">
+            <Text size="sm" fw="bold" ff="monospace" w="5rem">
+              {challenge.score}
+              <Text span fw="bold" c="dimmed">
+                /{challenge.originalScore}pts
+              </Text>
             </Text>
-          </Text>
+            {challenge.order && challenge.order > 0 && (
+              <Badge color={color} size="sm" variant="filled">
+                #{challenge.order}
+              </Badge>
+            )}
+          </Group>
         </Stack>
 
         <Tooltip label={t('admin.button.challenges.edit')} position="left" offset={10} classNames={classes}>

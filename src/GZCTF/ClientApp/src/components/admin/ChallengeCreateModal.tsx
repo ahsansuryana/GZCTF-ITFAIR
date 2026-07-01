@@ -1,4 +1,4 @@
-import { Button, ComboboxItem, Modal, ModalProps, Select, Stack, TextInput } from '@mantine/core'
+import { Button, ComboboxItem, Modal, ModalProps, NumberInput, Select, Stack, TextInput } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { showNotification } from '@mantine/notifications'
 import { mdiCheck } from '@mdi/js'
@@ -31,6 +31,7 @@ export const ChallengeCreateModal: FC<ChallengeCreateModalProps> = (props) => {
   const [title, setTitle] = useInputState('')
   const [category, setCategory] = useState<string | null>(null)
   const [type, setType] = useState<string | null>(null)
+  const [order, setOrder] = useInputState('1')
 
   const { t } = useTranslation()
 
@@ -45,6 +46,7 @@ export const ChallengeCreateModal: FC<ChallengeCreateModalProps> = (props) => {
         title: title,
         category: category as ChallengeCategory,
         type: type as ChallengeType,
+        order: parseInt(order) || 1,
       })
       showNotification({
         color: 'teal',
@@ -95,6 +97,14 @@ export const ChallengeCreateModal: FC<ChallengeCreateModalProps> = (props) => {
             const data = challengeTypeLabelMap.get(type[1])
             return { value: type[1], label: data?.name, ...data } as ComboboxItem
           })}
+        />
+        <NumberInput
+          label={t('admin.content.challenges.order.label')}
+          description={t('admin.content.challenges.order.description')}
+          required
+          min={1}
+          value={order}
+          onChange={setOrder}
         />
         <Button fullWidth disabled={disabled} onClick={onCreate}>
           {t('admin.button.challenges.new')}

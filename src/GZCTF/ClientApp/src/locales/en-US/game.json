@@ -69,7 +69,11 @@
       "comment": "It looks like everyone played fair!",
       "title": "No cheating detected yet"
     },
+    "challenge": {
+      "locked": "Complete challenge '{previousTitle}' first to unlock this challenge"
+    },
     "no_notice": "Nothing here.",
+</parameter=end param
     "no_traffic": {
       "comment": "Both platform and challenge need to be set up to enable capture",
       "title": "No challenge has traffic capture enabled"
