@@ -83,7 +83,7 @@ public class GameChallengeRepository(
             await SaveAsync(token);
     }
 
-public async Task<TaskStatus> RemoveFlag(GameChallenge challenge, int flagId, CancellationToken token = default)
+    public async Task<TaskStatus> RemoveFlag(GameChallenge challenge, int flagId, CancellationToken token = default)
     {
         var flag = await Context.FlagContexts
             .FirstOrDefaultAsync(f => f.Challenge == challenge && f.Id == flagId, token);
@@ -128,52 +128,6 @@ public async Task<TaskStatus> RemoveFlag(GameChallenge challenge, int flagId, Ca
 
         return await Context.FirstSolves
             .AnyAsync(fs => fs.ChallengeId == prevChallengeId && fs.ParticipationId == participationId, token);
-    }
-
-    public async Task UpdateAttachment(GameChallenge challenge, AttachmentCreateModel model,
-        CancellationToken token = default)
-    {
-        var attachment = model.ToAttachment(await blobRepository.GetBlobByHash(model.FileHash, token));
-
-        await blobRepository.DeleteAttachment(challenge.Attachment, token);
-
-        if (attachment is not null)
-            await Context.AddAsync(attachment, token);
-
-        challenge.Attachment = attachment;
-
-        await SaveAsync(token);
-    }
-}
-
-        return TaskStatus.Success;
-    }
-
-    public async Task<bool> IsChallengeUnlockedForTeamAsync(int challengeId, int participationId, CancellationToken token = default)
-    {
-        var challenge = await Context.GameChallenges
-            .Where(c => c.Id == challengeId)
-            .Select(c => new { c.Id, c.Order, c.GameId, c.Game.EnableSequentialChallenges })
-            .FirstOrDefaultAsync(token);
-
-        if (challenge is null || !challenge.EnableSequentialChallenges || challenge.Order <= 1)
-            return true;
-
-        // Check if team solved the previous challenge in order
-        var prevChallengeId = await Context.GameChallenges
-            .Where(c => c.GameId == challenge.GameId && c.Order == challenge.Order - 1 && c.IsEnabled)
-            .Select(c => c.Id)
-            .FirstOrDefaultAsync(token);
-
-        if (prevChallengeId == 0)
-            return true;
-
-        return await Context.FirstSolves
-            .AnyAsync(fs => fs.ChallengeId == prevChallengeId && fs.ParticipationId == participationId, token);
-    }
-}
-
-        return TaskStatus.Success;
     }
 
     public async Task UpdateAttachment(GameChallenge challenge, AttachmentCreateModel model,
