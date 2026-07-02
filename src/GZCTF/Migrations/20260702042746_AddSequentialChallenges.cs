@@ -10,19 +10,13 @@ namespace GZCTF.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "EnableSequentialChallenges",
-                table: "Games",
-                type: "boolean",
-                nullable: false,
-                defaultValue: false);
+            migrationBuilder.Sql("""
+                ALTER TABLE "Games"
+                ADD COLUMN IF NOT EXISTS "EnableSequentialChallenges" boolean NOT NULL DEFAULT false;
 
-            migrationBuilder.AddColumn<int>(
-                name: "Order",
-                table: "GameChallenges",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0);
+                ALTER TABLE "GameChallenges"
+                ADD COLUMN IF NOT EXISTS "Order" integer NOT NULL DEFAULT 0;
+            """);
 
             migrationBuilder.Sql(@"
                 UPDATE ""GameChallenges"" 
