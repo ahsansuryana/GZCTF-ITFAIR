@@ -1502,6 +1502,8 @@ export interface DetailedGameInfoModel {
   teamName?: string | null;
   /** Whether the game is in practice mode (can still be accessed after the game ends) */
   practiceMode?: boolean;
+  /** Whether challenges must be solved sequentially */
+  enableSequentialChallenges?: boolean;
   /** Team participation status */
   status?: ParticipationStatus;
   /**
