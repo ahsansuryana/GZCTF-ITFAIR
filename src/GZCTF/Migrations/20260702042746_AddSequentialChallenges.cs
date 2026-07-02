@@ -24,7 +24,6 @@ namespace GZCTF.Migrations
                 nullable: false,
                 defaultValue: 0);
 
-            // Data migration: Auto-assign Order to existing challenges when EnableSequentialChallenges is true
             migrationBuilder.Sql(@"
                 UPDATE ""GameChallenges"" 
                 SET ""Order"" = sub.rn

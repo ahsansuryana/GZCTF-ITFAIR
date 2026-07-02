@@ -465,6 +465,9 @@ namespace GZCTF.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("EnableSequentialChallenges")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTimeOffset>("EndTimeUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasJsonPropertyName("end");
@@ -492,9 +495,6 @@ namespace GZCTF.Migrations
                         .IsRequired()
                         .HasMaxLength(63)
                         .HasColumnType("character varying(63)");
-
-                    b.Property<bool>("SequentialMode")
-                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset>("StartTimeUtc")
                         .HasColumnType("timestamp with time zone")

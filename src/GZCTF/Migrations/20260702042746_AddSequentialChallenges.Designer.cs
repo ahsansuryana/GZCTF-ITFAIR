@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GZCTF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260701080946_AddSequentialChallenges")]
+    [Migration("20260702042746_AddSequentialChallenges")]
     partial class AddSequentialChallenges
     {
         /// <inheritdoc />
@@ -468,6 +468,9 @@ namespace GZCTF.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("EnableSequentialChallenges")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTimeOffset>("EndTimeUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasJsonPropertyName("end");
@@ -495,9 +498,6 @@ namespace GZCTF.Migrations
                         .IsRequired()
                         .HasMaxLength(63)
                         .HasColumnType("character varying(63)");
-
-                    b.Property<bool>("SequentialMode")
-                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset>("StartTimeUtc")
                         .HasColumnType("timestamp with time zone")
