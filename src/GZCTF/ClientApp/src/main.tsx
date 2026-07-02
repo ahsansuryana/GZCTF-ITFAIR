@@ -21,7 +21,7 @@ i18n
     })
   )
   .init({
-    fallbackLng: convertLanguage,
+    fallbackLng: 'en-US',
     interpolation: {
       escapeValue: false,
     },

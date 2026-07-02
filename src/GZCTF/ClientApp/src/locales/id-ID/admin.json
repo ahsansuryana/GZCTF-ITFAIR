@@ -289,7 +289,7 @@
           "description": "Lihat challenge setelah permainan selesai",
           "label": "Mode Latihan"
         },
-        "sequential_mode": {
+        "sequential_challenges": {
           "description": "Challenge harus dikerjakan berurutan sesuai nomor urut",
           "label": "Mode Berurutan"
         },
