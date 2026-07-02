@@ -85,6 +85,11 @@ public class ChallengeEditDetailModel
     public List<FlagInfoModel> Flags { get; set; } = [];
 
     /// <summary>
+    /// Sequential order (0 means no sequence / always available)
+    /// </summary>
+    public int Order { get; set; }
+
+    /// <summary>
     /// Image name and tag
     /// </summary>
     [Required]
@@ -181,6 +186,7 @@ public class ChallengeEditDetailModel
             Attachment = chal.Attachment,
             SubmissionLimit = chal.SubmissionLimit,
             DeadlineUtc = chal.DeadlineUtc,
+            Order = chal.Order,
             AcceptedCount = 0, // This field should be set externally
             TestContainer = chal.TestContainer is null ? null : ContainerInfoModel.FromContainer(chal.TestContainer),
             Flags = chal.Flags.Select(FlagInfoModel.FromFlagContext).ToList()

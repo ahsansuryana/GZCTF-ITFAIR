@@ -1145,6 +1145,11 @@ export interface ChallengeEditDetailModel {
   /** Challenge Flag information */
   flags: FlagInfoModel[];
   /**
+   * Sequential order (0 means no sequence / always available)
+   * @format int32
+   */
+  order?: number;
+  /**
    * Image name and tag
    * @minLength 1
    */
