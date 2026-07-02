@@ -1,5 +1,5 @@
 import { Button, ComboboxItem, Modal, ModalProps, NumberInput, Select, Stack, TextInput } from '@mantine/core'
-import { useInputState } from '@mantine/hooks'
+import { useInput } from '@mantine/hooks'
 import { showNotification } from '@mantine/notifications'
 import { mdiCheck } from '@mdi/js'
 import { Icon } from '@mdi/react'
@@ -28,7 +28,7 @@ export const ChallengeCreateModal: FC<ChallengeCreateModalProps> = (props) => {
   const challengeCategoryLabelMap = useChallengeCategoryLabelMap()
   const challengeTypeLabelMap = useChallengeTypeLabelMap()
 
-  const [title, setTitle] = useInputState('')
+  const [title, setTitle] = useInput('')
   const [category, setCategory] = useState<string | null>(null)
   const [type, setType] = useState<string | null>(null)
   const [order, setOrder] = useState(1)
