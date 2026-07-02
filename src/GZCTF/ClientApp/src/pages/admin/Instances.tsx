@@ -28,6 +28,7 @@ import dayjs from 'dayjs'
 import { FC, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { ActionIconWithConfirm } from '@Components/ActionIconWithConfirm'
+import { formatContainerIpPort } from '@Utils/Shared'
 import { AdminPage } from '@Components/admin/AdminPage'
 import { useLanguage } from '@Utils/I18n'
 import { showErrorMsg } from '@Utils/Shared'
@@ -278,7 +279,7 @@ const Instances: FC = () => {
                             fz="sm"
                             className={tableClasses.clickable}
                             onClick={() => {
-                              clipBoard.copy(`${inst.ip ?? ''}:${inst.port ?? ''}`)
+                              clipBoard.copy(formatContainerIpPort(inst.ip, inst.port))
                               showNotification({
                                 color: 'teal',
                                 message: t('admin.notification.instances.entry_copied'),
@@ -286,10 +287,7 @@ const Instances: FC = () => {
                               })
                             }}
                           >
-                            {`${inst.ip}:`}
-                            <Text span fw="bold">
-                              {inst.port}
-                            </Text>
+                            {formatContainerIpPort(inst.ip, inst.port)}
                           </Text>
                         </Tooltip>
                       </Table.Td>

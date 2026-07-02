@@ -17,7 +17,7 @@ import duration from 'dayjs/plugin/duration'
 import { FC, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HandleWsrxError, useWsrx } from '@Components/WsrxProvider'
-import { getProxyUrl as getProxyEntry } from '@Utils/Shared'
+import { getProxyUrl as getProxyEntry, formatContainerEntry } from '@Utils/Shared'
 import { useConfig } from '@Hooks/useConfig'
 import { ClientFlagContext, ContainerPortMappingType } from '@Api'
 import classes from '@Styles/InstanceEntry.module.css'
@@ -93,7 +93,9 @@ export const InstanceEntry: FC<InstanceEntryProps> = (props) => {
     config.portMapping === ContainerPortMappingType.PlatformProxy &&
     instanceEntry.length === 36 &&
     !instanceEntry.includes(':')
-  const originalEntry = isPlatformProxy ? getProxyEntry(instanceEntry, isPreview) : instanceEntry
+  const originalEntry = isPlatformProxy
+    ? getProxyEntry(instanceEntry, isPreview)
+    : formatContainerEntry(instanceEntry)
 
   const [canExtend, setCanExtend] = useDebouncedState(false, 500)
 

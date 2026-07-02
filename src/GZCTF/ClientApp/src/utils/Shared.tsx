@@ -564,6 +564,30 @@ export const getProxyUrl = (guid: string, isPreview: boolean = false) => {
   return `${protocol}//${window.location.host}/${api}/${guid}`
 }
 
+export const getContainerDomain = (): string | null => {
+  try {
+    return (import.meta as Record<string, any>).env.VITE_CONTAINER_DOMAIN || null
+  } catch {
+    return null
+  }
+}
+
+export const formatContainerEntry = (entry: string): string => {
+  const domain = getContainerDomain()
+  if (!domain) return entry
+
+  const port = entry.split(':').pop()
+  if (!port || !/^\d+$/.test(port)) return entry
+
+  return `${port}.${domain}`
+}
+
+export const formatContainerIpPort = (ip: string | undefined | null, port: number | undefined | null): string => {
+  const domain = getContainerDomain()
+  if (domain && port != null) return `${port}.${domain}`
+  return `${ip ?? ''}:${port ?? ''}`
+}
+
 export const HunamizeSize = (size: number) => {
   if (size < 1024) {
     return `${size} B`
