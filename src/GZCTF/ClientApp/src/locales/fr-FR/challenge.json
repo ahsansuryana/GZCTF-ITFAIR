@@ -32,7 +32,8 @@
     "ppc": "Programmation",
     "pwn": "Exploitation binaire",
     "reverse": "Ingénierie inverse",
-    "web": "Sécurité web"
+    "web": "Sécurité web",
+    "steganography": "Stéganographie"
   },
   "content": {
     "already_solved": "Ce défi a été résolu",

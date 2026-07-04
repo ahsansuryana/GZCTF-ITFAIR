@@ -352,7 +352,10 @@ public enum ChallengeCategory : byte
     Pentest = 11,
 
     // ReSharper disable once InconsistentNaming
-    OSINT = 12
+    OSINT = 12,
+
+    // ReSharper disable once InconsistentNaming
+    Steganography = 13
 }
 
 /// <summary>

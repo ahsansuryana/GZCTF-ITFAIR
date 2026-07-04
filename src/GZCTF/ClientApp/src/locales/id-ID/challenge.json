@@ -32,7 +32,8 @@
     "ppc": "Programming",
     "pwn": "Binary exploitation",
     "reverse": "Reverse engineering",
-    "web": "Web security"
+    "web": "Web security",
+    "steganography": "Steganografi"
   },
   "content": {
     "already_solved": "Challenge ini sudah diselesaikan",

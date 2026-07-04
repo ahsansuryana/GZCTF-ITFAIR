@@ -32,7 +32,8 @@
     "ppc": "프로그래밍",
     "pwn": "PWN",
     "reverse": "Reversing",
-    "web": "Web"
+    "web": "Web",
+    "steganography": "스테가노그래피"
   },
   "content": {
     "already_solved": "이미 해결한 문제입니다.",

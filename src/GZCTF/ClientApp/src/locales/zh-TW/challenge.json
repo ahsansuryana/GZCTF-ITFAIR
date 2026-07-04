@@ -32,7 +32,8 @@
     "ppc": "專業編程",
     "pwn": "二進制漏洞利用",
     "reverse": "逆向工程",
-    "web": "網絡安全"
+    "web": "網絡安全",
+    "steganography": "隱寫術"
   },
   "content": {
     "already_solved": "該題目已被解出",
