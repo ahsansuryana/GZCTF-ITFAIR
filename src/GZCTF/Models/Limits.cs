@@ -15,7 +15,7 @@ public static class Limits
     /// <summary>
     /// 队伍名称最大长度
     /// </summary>
-    public const int MaxTeamNameLength = 20;
+    public const int MaxTeamNameLength = 25;
 
     /// <summary>
     /// 队伍签名最大长度（前端展示原因）
