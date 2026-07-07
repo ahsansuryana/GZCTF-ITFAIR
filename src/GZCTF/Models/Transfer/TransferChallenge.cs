@@ -222,9 +222,6 @@ public class AttachmentSection : IValidatableObject
                 {
                     if (string.IsNullOrWhiteSpace(RemoteUrl))
                         yield return new ValidationResult("Remote attachment must have a URL", [nameof(RemoteUrl)]);
-
-                    if (string.IsNullOrWhiteSpace(FileName))
-                        yield return new ValidationResult("Remote attachment must have a file name", [nameof(FileName)]);
                     break;
                 }
         }

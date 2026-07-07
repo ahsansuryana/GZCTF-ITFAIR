@@ -70,7 +70,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) :
                 .HasConversion<int>();
 
             entity.Property(e => e.UserName)
-                .HasMaxLength(16);
+                .HasMaxLength(Limits.MaxUserNameLength);
 
             entity.Property(e => e.ExerciseVisible)
                 .HasDefaultValue(true);
